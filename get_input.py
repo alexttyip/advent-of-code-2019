@@ -8,6 +8,7 @@ import requests
 
 def create_dir():
     subprocess.run(["cargo", "new", day_dir])
+    subprocess.run(["rm", "-rf", f"{day_dir}/.git"])
 
 
 def download_input():
