@@ -10,6 +10,8 @@ def create_dir():
     subprocess.run(["cargo", "new", day_dir])
     subprocess.run(["rm", "-rf", f"{day_dir}/.git"])
 
+    open(f"{day_dir}/.gitignore", "w").write("/target\n")
+
 
 def download_input():
     if not os.path.isdir(day_dir):
