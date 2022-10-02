@@ -19,7 +19,7 @@ def download_input():
 
     url = f"https://adventofcode.com/2019/day/{day}/input"
     cookie = {
-        "session": "53616c7465645f5f66aba92f012b2adf844c3ad43df6d4ce06535638e807c83fc4a61a15dd8bd72643aa2b30313bd55ced529ba68f0e1312a33696289e598764 "
+        "session": "53616c7465645f5f697cbf87ea19d83af146a2b572b5ef2a7374c290f79f8c615f9c359b56489a566bfdf7013caa22f5c1470bbc3b3089962565219fd4e1d7cc"
     }
     resp = requests.get(url, cookies=cookie)
 
