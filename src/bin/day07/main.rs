@@ -1,6 +1,8 @@
-use std::fs;
+#![feature(test)]
+
 use std::cmp::max;
 use std::collections::VecDeque;
+use std::time::Instant;
 
 struct Amplifier {
     code: Vec<isize>,
@@ -10,7 +12,7 @@ struct Amplifier {
 }
 
 fn read_input() -> Vec<isize> {
-    fs::read_to_string("./inputs/day07.txt").unwrap()
+    include_str!("./input.txt")
         .trim()
         .split(",")
         .map(|s| s.parse().unwrap())
@@ -128,7 +130,11 @@ fn run_computer(amplifier: Amplifier) -> Option<Amplifier> {
 }
 
 fn permutations(from: usize, to: usize) -> Permutations {
-    Permutations { idxs: (from..to).collect(), swaps: vec![0; to - from], i: 0 }
+    Permutations {
+        idxs: (from..to).collect(),
+        swaps: vec![0; to - from],
+        i: 0,
+    }
 }
 
 struct Permutations {
@@ -143,8 +149,12 @@ impl Iterator for Permutations {
     fn next(&mut self) -> Option<Self::Item> {
         if self.i > 0 {
             loop {
-                if self.i >= self.swaps.len() { return None; }
-                if self.swaps[self.i] < self.i { break; }
+                if self.i >= self.swaps.len() {
+                    return None;
+                }
+                if self.swaps[self.i] < self.i {
+                    break;
+                }
                 self.swaps[self.i] = 0;
                 self.i += 1;
             }
@@ -168,7 +178,9 @@ fn part1() -> isize {
                 code: code.clone(),
                 pointer: 0,
                 output: 0,
-            }).unwrap().output;
+            })
+            .unwrap()
+            .output;
         }
 
         answer = max(answer, output);
@@ -183,14 +195,12 @@ fn part2() -> isize {
     let mut answer = 0;
 
     for perm in permutations(5, 10) {
-        let mut amps: VecDeque<Amplifier> = VecDeque::from_iter(
-            perm.iter().map(|i| Amplifier {
-                code: code.clone(),
-                pointer: 0,
-                input: VecDeque::from([*i as isize]),
-                output: 0,
-            })
-        );
+        let mut amps: VecDeque<Amplifier> = VecDeque::from_iter(perm.iter().map(|i| Amplifier {
+            code: code.clone(),
+            pointer: 0,
+            input: VecDeque::from([*i as isize]),
+            output: 0,
+        }));
 
         let mut output = 0;
         loop {
@@ -213,10 +223,38 @@ fn part2() -> isize {
 
     answer
 }
+pub fn main() {
+    let mut now = Instant::now();
+    let part1 = part1();
+    let part1_elapsed = now.elapsed();
 
-pub fn run() {
+    now = Instant::now();
+    let part2 = part2();
+    let part2_elapsed = now.elapsed();
+
     println!("--- Day 07 ---");
-    println!("Part 1: {}", part1());
-    println!("Part 2: {}", part2());
-    println!();
+    println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2);
+    println!("Part 1 took: {:.2?}", part1_elapsed);
+    println!("Part 2 took: {:.2?}", part2_elapsed);
+
+    assert_eq!(part1, 51679);
+    assert_eq!(part2, 19539216);
+}
+
+#[cfg(test)]
+mod tests {
+    extern crate test;
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_part1(b: &mut Bencher) {
+        b.iter(part1);
+    }
+
+    #[bench]
+    fn bench_part2(b: &mut Bencher) {
+        b.iter(part2);
+    }
 }

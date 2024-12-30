@@ -1,13 +1,17 @@
-use std::fs;
+#![feature(test)]
 
-fn run_computer(input: isize, part2: bool) {
-    let mut code: Vec<isize> = fs::read_to_string("./inputs/day05.txt").unwrap()
+use std::time::Instant;
+
+fn run_computer(input: isize, part2: bool) -> isize {
+    let mut code: Vec<isize> = include_str!("input.txt")
         .trim()
         .split(",")
         .map(|s| s.parse().unwrap())
         .collect();
 
     let mut pointer = 0;
+
+    let mut output = 0;
 
     loop {
         let mut first_value = code[pointer];
@@ -53,10 +57,12 @@ fn run_computer(input: isize, part2: bool) {
             }
             4 => {
                 if code[a_idx] != 0 {
-                    println!("{}", code[a_idx]);
+                    output = output * 10 + code[a_idx];
                 }
 
-                if part2 { break; }
+                if part2 {
+                    break;
+                }
 
                 pointer += 2;
             }
@@ -75,34 +81,65 @@ fn run_computer(input: isize, part2: bool) {
                 };
             }
             7 => {
-                code[c_idx] = if code[a_idx] < code[b_idx] {
-                    1
-                } else {
-                    0
-                };
+                code[c_idx] = if code[a_idx] < code[b_idx] { 1 } else { 0 };
 
                 pointer += 4;
             }
             8 => {
-                code[c_idx] = if code[a_idx] == code[b_idx] {
-                    1
-                } else {
-                    0
-                };
+                code[c_idx] = if code[a_idx] == code[b_idx] { 1 } else { 0 };
 
                 pointer += 4;
             }
-            99 => { break; }
-            _ => ()
+            99 => {
+                break;
+            }
+            _ => (),
         }
     }
+
+    output
 }
 
-pub fn run() {
+fn part1() -> isize {
+    run_computer(1, false)
+}
+
+fn part2() -> isize {
+    run_computer(5, true)
+}
+
+pub fn main() {
+    let mut now = Instant::now();
+    let part1 = part1();
+    let part1_elapsed = now.elapsed();
+
+    now = Instant::now();
+    let part2 = part2();
+    let part2_elapsed = now.elapsed();
+
     println!("--- Day 05 ---");
-    print!("Part 1: ");
-    run_computer(1, false);
-    print!("Part 2: ");
-    run_computer(5, true);
-    println!();
+    println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2);
+    println!("Part 1 took: {:.2?}", part1_elapsed);
+    println!("Part 2 took: {:.2?}", part2_elapsed);
+
+    assert_eq!(part1, 13210611);
+    assert_eq!(part2, 584126);
+}
+
+#[cfg(test)]
+mod tests {
+    extern crate test;
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_part1(b: &mut Bencher) {
+        b.iter(part1);
+    }
+
+    #[bench]
+    fn bench_part2(b: &mut Bencher) {
+        b.iter(part2);
+    }
 }

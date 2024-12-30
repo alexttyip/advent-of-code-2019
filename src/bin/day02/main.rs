@@ -1,8 +1,10 @@
+#![feature(test)]
+
 use std::fs;
+use std::time::Instant;
 
 fn run_computer(noun: usize, verb: usize) -> usize {
-    let mut input: Vec<usize> = fs::read_to_string("./inputs/day02.txt")
-        .unwrap()
+    let mut input: Vec<usize> = include_str!("input.txt")
         .split(",")
         .flat_map(|s| s.parse())
         .collect();
@@ -30,14 +32,20 @@ fn run_computer(noun: usize, verb: usize) -> usize {
                 input[c_idx] = a * b;
                 pointer += 4;
             }
-            _ => { break; }
+            _ => {
+                break;
+            }
         }
     }
 
     input[0]
 }
 
-fn cal_part2() -> usize {
+fn part1() -> usize {
+    run_computer(12, 2)
+}
+
+fn part2() -> usize {
     for i in 0..100 {
         for j in 0..100 {
             if run_computer(i, j) == 19690720 {
@@ -46,19 +54,41 @@ fn cal_part2() -> usize {
         }
     }
 
-    0
+    panic!()
 }
 
+pub fn main() {
+    let mut now = Instant::now();
+    let part1 = part1();
+    let part1_elapsed = now.elapsed();
 
-pub fn run() {
-    let part1 = run_computer(12, 2);
-    let part2 = cal_part2();
+    now = Instant::now();
+    let part2 = part2();
+    let part2_elapsed = now.elapsed();
+
+    println!("--- Day 02 ---");
+    println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2);
+    println!("Part 1 took: {:.2?}", part1_elapsed);
+    println!("Part 2 took: {:.2?}", part2_elapsed);
 
     assert_eq!(part1, 5482655);
     assert_eq!(part2, 4967);
+}
 
-    println!("--- Day 02 ---");
-    println!("Part 1: {part1}");
-    println!("Part 2: {part2}");
-    println!();
+#[cfg(test)]
+mod tests {
+    extern crate test;
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_part1(b: &mut Bencher) {
+        b.iter(part1);
+    }
+
+    #[bench]
+    fn bench_part2(b: &mut Bencher) {
+        b.iter(part2);
+    }
 }

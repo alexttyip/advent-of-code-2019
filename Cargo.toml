@@ -1,9 +1,13 @@
 [package]
-name = "aoc2019"
+name = "advent-of-code-2019"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = { version = "0", features = ["blocking"] }
+dotenv = "0.15"
+itertools = "0.13"
+num = "0.4.3"
+regex = "1.10"
+reqwest = { version = "0.12", features = ["blocking"] }
